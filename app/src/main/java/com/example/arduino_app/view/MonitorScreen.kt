@@ -21,10 +21,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction // Use ONLY this one
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.arduino_app.viewModel.OfficeViewModel
+import com.example.arduino_app.viewModel.ControlViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MonitorScreen(viewModel: OfficeViewModel) {
+fun MonitorScreen(viewModel: ControlViewModel) {
     var terminalHistory by remember { mutableStateOf("Terminal Ready...\n") }
     var commandInput by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()

@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.arduino_app.viewModel.OfficeViewModel
+import com.example.arduino_app.viewModel.ControlViewModel
 
 @Composable
-fun TrackerScreen(viewModel: OfficeViewModel) {
+fun TrackerScreen(viewModel: ControlViewModel) {
     // Collect the state from the ViewModel
     //  val state by viewModel.uiState.collectAsState()
 

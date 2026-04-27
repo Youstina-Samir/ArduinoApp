@@ -29,8 +29,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.arduino_app.model.Screen
 import com.example.arduino_app.ui.theme.Arduino_appTheme
-import com.example.arduino_app.viewModel.OfficeViewModel
-import com.example.arduino_app.viewModel.VarViewModel
+import com.example.arduino_app.viewModel.ControlViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,28 +37,29 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Arduino_appTheme {
-                val navController = rememberNavController()
-                val viewModel: OfficeViewModel = viewModel()
-
-                Scaffold(
-                    topBar = {
-                        AppTopBar(viewModel)
-                    },
-                    bottomBar = { BottomNavigationBar(navController) }
-                ) { innerPadding ->
-                    MainScreen(
-                        viewModel = viewModel,
-                        navController = navController,
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+             //   val navController = rememberNavController()
+                val viewModel: ControlViewModel = viewModel()
+                Drawer(viewModel = viewModel)
+//                Scaffold(
+//                    topBar = {
+//                        AppTopBar(viewModel)
+//                    },
+//                    bottomBar = { BottomNavigationBar(navController) }
+//                ) { innerPadding ->
+//                    MainScreen(
+//                        viewModel = viewModel,
+//                        navController = navController,
+//                        modifier = Modifier.padding(innerPadding)
+//                    )
+//                }
             }
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppTopBar(viewModel: OfficeViewModel) {
+fun AppTopBar(viewModel: ControlViewModel) {
     val context = LocalContext.current
     val isConnected by viewModel.isConnected.collectAsState()
 
@@ -109,12 +109,12 @@ fun AppTopBar(viewModel: OfficeViewModel) {
     )
 }
 @Composable
-fun MainScreen(VM1: OfficeViewModel, VM2: VarViewModel, navController: NavHostController, modifier: Modifier) {
+fun MainScreen(viewModel: ControlViewModel, navController: NavHostController, modifier: Modifier) {
     NavHost(navController = navController, startDestination = Screen.Office.route) {
-        composable(Screen.Office.route) { OfficeScreen(VM1) }
-        composable(Screen.Var.route) { VarScreen(VM2) }
+        composable(Screen.Office.route) { OfficeScreen(viewModel) }
+        composable(Screen.Var.route) { VarScreen(viewModel) }
         composable(Screen.Tracker.route) { TrackerScreen(viewModel) } // It picks up its own ViewModel!
-        composable(Screen.Monitor.route) { MonitorScreen(VM1) }
+        composable(Screen.Monitor.route) { MonitorScreen(viewModel) }
 
     }
 }

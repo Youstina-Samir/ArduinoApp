@@ -18,10 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.arduino_app.viewModel.OfficeViewModel
+import com.example.arduino_app.viewModel.ControlViewModel
 
 @Composable
-fun OfficeScreen(viewModel: OfficeViewModel) {
+fun OfficeScreen(viewModel: ControlViewModel) {
 
     val isAutoMode by viewModel.isAutoMode.collectAsState()
     val isLampOn by viewModel.isLampOn.collectAsState()
@@ -37,7 +37,7 @@ fun OfficeScreen(viewModel: OfficeViewModel) {
     ) {
 
         Text(
-            text = "Lamp Control",
+            text = "Office Control",
             style = MaterialTheme.typography.headlineMedium
         )
 
