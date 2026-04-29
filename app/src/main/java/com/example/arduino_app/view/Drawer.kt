@@ -8,6 +8,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -33,6 +34,7 @@ fun Drawer(viewModel: ControlViewModel) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
+    val isDark by viewModel.isDarkMode.collectAsState()
     val isConnected by viewModel.isConnected.collectAsState()
     val connectedName by viewModel.connectedDeviceName.collectAsState() // Observe here
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -63,7 +65,11 @@ fun Drawer(viewModel: ControlViewModel) {
             Toast.makeText(context, "Bluetooth permissions are required", Toast.LENGTH_LONG).show()
         }
     }
-
+    LaunchedEffect(Unit) {
+        viewModel.Message.collect { message ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+    }
     // 4. The Click Handler logic (moved inside a lambda for the onClick)
     val onConnectClick: (String, String) -> Unit = { name, mac ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -88,8 +94,31 @@ fun Drawer(viewModel: ControlViewModel) {
         drawerContent = {
             ModalDrawerSheet {
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("CONTROL HUB", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleLarge)
-
+               Row(modifier = Modifier
+                   .fillMaxWidth()
+                   .padding(horizontal = 16.dp, vertical = 8.dp),
+                   verticalAlignment = Alignment.CenterVertically,
+                   horizontalArrangement = Arrangement.SpaceBetween) {
+                   Text(
+                       "CONTROL HUB",
+                       modifier = Modifier.padding(16.dp),
+                       style = MaterialTheme.typography.titleLarge
+                   )
+                   IconToggleButton(
+                       checked = isDark,
+                       onCheckedChange = { viewModel.toggleTheme(it) }
+                   ) {
+                       // Use Crossfade for a smooth transition between icons
+                       Crossfade(targetState = isDark, label = "ThemeIconAnimation") { dark ->
+                           Icon(
+                               imageVector = if (dark) Icons.Filled.DarkMode else Icons.Filled.LightMode,
+                               contentDescription = "Toggle Theme",
+                               tint = if (dark) Color(0xFFBB86FC) else Color(0xFFFFB300), // Purple for Moon, Gold for Sun
+                               modifier = Modifier.size(32.dp)
+                           )
+                       }
+                   }
+               }
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
                 Text("CONNECT TO DEVICE", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.labelLarge)

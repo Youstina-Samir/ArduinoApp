@@ -10,10 +10,15 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.padding
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -26,32 +31,22 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.example.arduino_app.model.Screen
-import com.example.arduino_app.ui.theme.Arduino_appTheme
 import com.example.arduino_app.viewModel.ControlViewModel
+import com.example.compose.darkScheme
+import com.example.compose.lightScheme
+import com.example.ui.theme.AppTypography
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Arduino_appTheme {
-             //   val navController = rememberNavController()
-                val viewModel: ControlViewModel = viewModel()
+            val viewModel: ControlViewModel = viewModel()
+            val isDark by viewModel.isDarkMode.collectAsState()
+            Arduino_appThemeNew(darkTheme = isDark) {             //   val navController = rememberNavController()
                 Drawer(viewModel = viewModel)
-//                Scaffold(
-//                    topBar = {
-//                        AppTopBar(viewModel)
-//                    },
-//                    bottomBar = { BottomNavigationBar(navController) }
-//                ) { innerPadding ->
-//                    MainScreen(
-//                        viewModel = viewModel,
-//                        navController = navController,
-//                        modifier = Modifier.padding(innerPadding)
-//                    )
-//                }
+
             }
         }
     }
@@ -110,19 +105,44 @@ fun AppTopBar(viewModel: ControlViewModel) {
 }
 @Composable
 fun MainScreen(viewModel: ControlViewModel, navController: NavHostController, modifier: Modifier) {
-    NavHost(navController = navController, startDestination = Screen.Office.route) {
+    NavHost(navController = navController,
+        startDestination = Screen.Office.route,
+        enterTransition = {
+            fadeIn(animationSpec = tween(100))
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(100))
+        },
+        popEnterTransition = {
+            fadeIn(animationSpec = tween(100))
+        },
+        popExitTransition = {
+            fadeOut(animationSpec = tween(100))
+        }) {
         composable(Screen.Office.route) { OfficeScreen(viewModel) }
         composable(Screen.Var.route) { VarScreen(viewModel) }
         composable(Screen.Tracker.route) { TrackerScreen(viewModel) } // It picks up its own ViewModel!
-        composable(Screen.Monitor.route) { MonitorScreen(viewModel) }
+        composable(Screen.Terminal.route) { MonitorScreen(viewModel) }
 
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview() {
-//    Arduino_appTheme {
-//        HomePage()
-//    }
-//}
+@Composable
+fun Arduino_appThemeNew(
+    darkTheme: Boolean = isSystemInDarkTheme(), // Default to system setting
+    content: @Composable () -> Unit
+) {
+    // Choose colors based on the boolean
+    val colorScheme = if (darkTheme) {
+        darkScheme // Your professional Dark Colors
+    } else {
+        lightScheme // Your professional Light Colors
+    }
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = AppTypography, // This is where your Montserrat lives
+        content = content
+    )
+}
+

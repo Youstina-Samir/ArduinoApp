@@ -21,7 +21,7 @@ fun BottomNavigationBar(navController: NavHostController) {
         Screen.Office,
         Screen.Var,
         Screen.Tracker,
-        Screen.Monitor
+        Screen.Terminal
     )
 
     NavigationBar {

@@ -47,6 +47,13 @@ class ControlViewModel : ViewModel() {
     private val _connectedDeviceName = MutableStateFlow("")
     val connectedDeviceName: StateFlow<String> = _connectedDeviceName.asStateFlow()
 
+    // Inside ControlViewModel.kt
+    private val _isDarkMode = MutableStateFlow(false)
+    val isDarkMode: StateFlow<Boolean> = _isDarkMode.asStateFlow()
+
+    fun toggleTheme(isDark: Boolean) {
+        _isDarkMode.value = isDark
+    }
     // 🔌 CONNECT TO HC-05
     fun connectOfficeToHC05(context: Context) {
         // Determine if we are on Android 12 or higher
